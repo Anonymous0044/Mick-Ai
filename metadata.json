@@ -1,0 +1,8 @@
+{
+  "name": "Mick AI",
+  "description": "Creative brainstorming partner and idea accelerator to spark ideas, brainstorm concepts, and refine creative work.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

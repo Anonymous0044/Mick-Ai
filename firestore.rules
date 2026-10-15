@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUserProfile(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.username is string && data.username.size() >= 1 && data.username.size() <= 100 &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidCommunityPost(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 100 &&
+             (!('authorAvatarUrl' in data) || (data.authorAvatarUrl is string && data.authorAvatarUrl.size() <= 200000)) &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 50000 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 50 &&
+             (!('mediaUrl' in data) || (data.mediaUrl is string && data.mediaUrl.size() <= 200000)) &&
+             data.likesCount is int && data.likesCount >= 0 &&
+             data.createdAt is timestamp && data.createdAt <= request.time;
+    }
+
+    function isValidCommunityComment(data) {
+      return data.postId is string && data.postId.size() >= 1 && data.postId.size() <= 100 &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 100 &&
+             data.text is string && data.text.size() >= 1 && data.text.size() <= 5000 &&
+             data.createdAt is timestamp && data.createdAt <= request.time;
+    }
+
+    function isValidSession(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 50 &&
+             data.pinned is bool &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidMessage(data) {
+      return data.sessionId is string && data.sessionId.size() >= 1 && data.sessionId.size() <= 100 &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.role in ['user', 'model'] &&
+             data.text is string && data.text.size() <= 50000 &&
+             data.multimodalType is string && data.multimodalType.size() <= 50 &&
+             (!('mediaUrl' in data) || (data.mediaUrl is string && data.mediaUrl.size() <= 200000)) &&
+             data.createdAt is timestamp && data.createdAt <= request.time;
+    }
+
+    function isValidSpark(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 50000 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 50 &&
+             data.tags is list && data.tags.size() <= 10 &&
+             data.isFavorite is bool &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      allow update: if isOwner(userId) && isValidUserProfile(request.resource.data);
+      allow delete: if isOwner(userId);
+    }
+
+    // Community posts
+    match /community_posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(request.resource.data.userId) && isValidCommunityPost(request.resource.data);
+      allow update: if isAuthenticated() && (
+        (isOwner(resource.data.userId) && isValidCommunityPost(request.resource.data)) ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likesCount']))
+      );
+      allow delete: if isOwner(resource.data.userId);
+
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if isAuthenticated();
+        allow create: if isOwner(request.resource.data.userId) && isValidCommunityComment(request.resource.data);
+        allow update: if isOwner(resource.data.userId) && isValidCommunityComment(request.resource.data);
+        allow delete: if isOwner(resource.data.userId);
+      }
+    }
+
+    // Sessions collection
+    match /sessions/{sessionId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId) && isValidSession(request.resource.data);
+      allow update: if isOwner(resource.data.userId) && isOwner(request.resource.data.userId) && isValidSession(request.resource.data);
+      allow delete: if isOwner(resource.data.userId);
+
+      // Nested messages subcollection
+      match /messages/{messageId} {
+        allow read: if isAuthenticated() && (
+          resource.data.userId == request.auth.uid ||
+          get(/databases/$(database)/documents/sessions/$(sessionId)).data.userId == request.auth.uid
+        );
+        allow create: if isOwner(request.resource.data.userId) &&
+                         get(/databases/$(database)/documents/sessions/$(sessionId)).data.userId == request.auth.uid &&
+                         isValidMessage(request.resource.data);
+        allow update: if isOwner(resource.data.userId) && isOwner(request.resource.data.userId) && isValidMessage(request.resource.data);
+        allow delete: if isOwner(resource.data.userId) ||
+                         get(/databases/$(database)/documents/sessions/$(sessionId)).data.userId == request.auth.uid;
+      }
+    }
+
+    // Saved Sparks collection
+    match /sparks/{sparkId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isOwner(request.resource.data.userId) && isValidSpark(request.resource.data);
+      allow update: if isOwner(resource.data.userId) && isOwner(request.resource.data.userId) && isValidSpark(request.resource.data);
+      allow delete: if isOwner(resource.data.userId);
+    }
+  }
+}

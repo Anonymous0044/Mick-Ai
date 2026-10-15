@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">میک اے آئی</string>
+    <string name="nav_chat">بات چیت</string>
+    <string name="nav_studio">اسٹوڈیو</string>
+    <string name="nav_community">لاؤنج</string>
+    <string name="nav_sparks">خیالات</string>
+    <string name="nav_profile">پروفائل</string>
+
+    <!-- Language -->
+    <string name="language_toggle">English</string>
+    <string name="language_english">انگریزی</string>
+    <string name="language_urdu">اردو</string>
+
+    <!-- Voice Copy & Create Voice -->
+    <string name="voice_studio_title">وائس فورج اسٹوڈیو</string>
+    <string name="voice_studio_subtitle">اصلی آواز کی نقل (کلوننگ)، نئی آوازیں بنانا، اور اردو و انگریزی میں قدرتی انداز میں پڑھوانا۔</string>
+    <string name="tab_voice_copy">آواز کی نقل (کلون)</string>
+    <string name="tab_voice_create">نئی آواز بنائیں</string>
+    <string name="tab_voice_tts">آواز میں سنیں</string>
+    <string name="tab_voice_library">میری محفوظ آوازیں</string>
+
+    <string name="voice_copy_header">آواز کی نقل اور صوتی کلوننگ</string>
+    <string name="voice_copy_desc">مائیکروفون سے 5 سے 10 سیکنڈ کا صوتی نمونہ ریکارڈ کریں۔ میک اے آئی آپ کی آواز کی پچ، لے، فریکوئنسی اور انداز کا تجزیہ کر کے وائس کلون تیار کرے گا۔</string>
+    <string name="record_sample_button">آواز ریکارڈ کریں</string>
+    <string name="stop_recording_button">ریکارڈنگ روکیں</string>
+    <string name="play_sample_button">نمونہ سنیں</string>
+    <string name="analyze_and_clone_button">تجزیہ کریں اور نقل بنائیں</string>
+    <string name="cloned_voice_ready">آواز کی نقل کامیابی سے بن گئی!</string>
+
+    <string name="voice_create_header">وائس ڈیزائنر: نئی آواز بنائیں</string>
+    <string name="voice_create_desc">اپنی مرضی کی صوتی شخصیت بنائیں۔ پچ، رفتار، لہجہ اور اردو و انگریزی ادائیگی کا انداز منتخب کریں۔</string>
+    <string name="voice_name_label">آواز کا نام</string>
+    <string name="voice_name_placeholder">مثلاً طارق غزل راوی، زہرا، صوتی ہیرو</string>
+    <string name="voice_gender_label">صوتی کردار و صنف</string>
+    <string name="voice_language_label">زبان و لہجہ</string>
+    <string name="voice_style_label">ادائیگی کا انداز اور جذبات</string>
+    <string name="pitch_slider_label">پچ کنٹرول</string>
+    <string name="speed_slider_label">رفتار / روانی</string>
+    <string name="save_custom_voice_button">نئی آواز محفوظ کریں</string>
+    <string name="preview_custom_voice_button">آواز کا نمونہ سنیں</string>
+
+    <string name="tts_input_label">پڑھنے کے لیے متن درج کریں (اردو یا انگریزی)</string>
+    <string name="tts_sample_urdu_poetry">روشنی اور تخیل کا نیا سفر، مک اے آئی کے سنگ۔</string>
+    <string name="tts_sample_english">Welcome to Mick AI. The creative spark is already ignited inside your imagination.</string>
+    <string name="btn_recite_aloud">باآواز بلند سنیں</string>
+    <string name="btn_save_spark">محفوظ کریں</string>
+
+    <!-- Guest Mode -->
+    <string name="guest_account">مہمان موڈ (Guest)</string>
+    <string name="guest_subtext">تمام خصوصیات آزمائیں۔ سائن ان کی ضرورت نہیں۔</string>
+    <string name="continue_as_guest">بطور مہمان داخل ہوں</string>
+</resources>

@@ -1,0 +1,129 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with username, avatar image, creative preferences, and settings",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Google User UID" },
+        "username": { "type": "string", "description": "Display name / creative alias" },
+        "avatarUrl": { "type": "string", "description": "Profile picture URL or base64 avatar" },
+        "bio": { "type": "string", "description": "User creative bio or tagline" },
+        "preferredCreativeStyle": { "type": "string", "description": "Preferred voice / style: poetic, concise, expansive, speculative" },
+        "favoriteDomains": { "type": "array", "description": "List of favorite creative domains" },
+        "enableHighThinking": { "type": "boolean", "description": "Whether High Thinking mode is default" },
+        "enableLowLatency": { "type": "boolean", "description": "Whether Low Latency mode is default" },
+        "preferredVoice": { "type": "string", "description": "Preferred TTS voice" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Profile creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Profile update timestamp" }
+      },
+      "required": ["userId", "username", "preferredCreativeStyle", "favoriteDomains", "createdAt", "updatedAt"]
+    },
+    "CommunityPost": {
+      "title": "CommunityPost",
+      "description": "Public community post sharing a creation, spark, prompt, or discussion",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Post unique ID" },
+        "userId": { "type": "string", "description": "Author UID" },
+        "authorName": { "type": "string", "description": "Author username" },
+        "authorAvatarUrl": { "type": "string", "description": "Author avatar URL" },
+        "title": { "type": "string", "description": "Post title" },
+        "content": { "type": "string", "description": "Post body text" },
+        "category": { "type": "string", "description": "Category: story, art, music, science, prompt, general" },
+        "mediaUrl": { "type": "string", "description": "Optional image or creation URL" },
+        "likesCount": { "type": "integer", "description": "Number of likes" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Post creation timestamp" }
+      },
+      "required": ["id", "userId", "authorName", "title", "content", "category", "likesCount", "createdAt"]
+    },
+    "CommunityComment": {
+      "title": "CommunityComment",
+      "description": "Comment in a community discussion thread",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Comment unique ID" },
+        "postId": { "type": "string", "description": "Parent Post ID" },
+        "userId": { "type": "string", "description": "Author UID" },
+        "authorName": { "type": "string", "description": "Author username" },
+        "text": { "type": "string", "description": "Comment text" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Comment creation timestamp" }
+      },
+      "required": ["id", "postId", "userId", "authorName", "text", "createdAt"]
+    },
+    "Session": {
+      "title": "Session",
+      "description": "A creative brainstorming session with Mick AI",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Session unique ID" },
+        "userId": { "type": "string", "description": "Owner Google User UID" },
+        "title": { "type": "string", "description": "Session title" },
+        "category": { "type": "string", "description": "Creative domain category" },
+        "pinned": { "type": "boolean", "description": "Whether session is pinned to top" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last update" }
+      },
+      "required": ["id", "userId", "title", "category", "pinned", "createdAt", "updatedAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A single prompt or creative response within a session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Message unique ID" },
+        "sessionId": { "type": "string", "description": "Parent session ID" },
+        "userId": { "type": "string", "description": "User UID who owns this conversation" },
+        "role": { "type": "string", "description": "Role: user or model" },
+        "text": { "type": "string", "description": "Message text content" },
+        "multimodalType": { "type": "string", "description": "Multimodal modality used" },
+        "mediaUrl": { "type": "string", "description": "Optional media or reference link" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of message" }
+      },
+      "required": ["id", "sessionId", "userId", "role", "text", "multimodalType", "createdAt"]
+    },
+    "Spark": {
+      "title": "Spark",
+      "description": "A saved creative spark, concept, snippet, or idea",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Spark unique ID" },
+        "userId": { "type": "string", "description": "Owner Google User UID" },
+        "title": { "type": "string", "description": "Spark title" },
+        "content": { "type": "string", "description": "Idea body content" },
+        "category": { "type": "string", "description": "Category: story, music, art, science, branding, etc." },
+        "tags": { "type": "array", "description": "List of user tags (up to 10)" },
+        "isFavorite": { "type": "boolean", "description": "Favorite flag" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp of last update" }
+      },
+      "required": ["id", "userId", "title", "content", "category", "tags", "isFavorite", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile, creative preferences, and settings"
+    },
+    "/community_posts/{postId}": {
+      "schema": { "$ref": "#/entities/CommunityPost" },
+      "description": "Public community lounge creations and discussions"
+    },
+    "/community_posts/{postId}/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/CommunityComment" },
+      "description": "Discussion comments on community creations"
+    },
+    "/sessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/Session" },
+      "description": "Creative brainstorming sessions owned by the authenticated user"
+    },
+    "/sessions/{sessionId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Messages within a creative brainstorming session"
+    },
+    "/sparks/{sparkId}": {
+      "schema": { "$ref": "#/entities/Spark" },
+      "description": "Saved creative sparks, concepts, and ideas"
+    }
+  }
+}
